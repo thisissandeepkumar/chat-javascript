@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const WebSocket = require('ws');
 
 // Middleware Imports
 const auth = require('./middlewares/auth');
@@ -20,5 +21,23 @@ app.use('/auth', userRouter);
 app.use('/chatroom', auth ,chatroomRouter);
 app.use('/message', auth, messageRouter);
 
+let server = new WebSocket.Server(
+    {
+        port: process.env.SOCKET_PORT
+    }
+);
+
+server.on('connection', (client) => {
+    console.log('Client Connected!');
+    client.send('connected');
+    client.on('message', (message) => {
+        const messageObject = JSON.parse(message);
+        console.log(messageObject.message);
+        for (let cl of server.clients){
+            cl.send(messageObject.message);
+        }
+
+    });
+});
 
 app.listen(process.env.APP_PORT || 3000);
