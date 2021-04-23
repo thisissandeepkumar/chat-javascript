@@ -29,8 +29,7 @@ const createUser = (user, result) => {
 };
 
 const getUserByQuery = (queryObject, result) => {
-    console.log(queryObject);
-    sql.query("SELECT * FROM user WHERE user." + queryObject.query + " = ?", [queryObject.value], (err, res) => {
+    sql.query("SELECT * FROM user WHERE user." + queryObject.query + " = ?;", [queryObject.value], (err, res) => {
         if(err){
             result(err, null);
             return;
