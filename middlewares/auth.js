@@ -11,7 +11,6 @@ const auth = (req, res, next) => {
                 res.status(475).json({'error': 'token invalid', 'message': err});
             }
             else{
-                console.log(decoded);
                 user.getUserByQuery({'query': 'username', 'value': decoded.username}, (err, data) => {
                     if(err){
                         res.status(474).json({'error': 'user model error'});
