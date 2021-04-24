@@ -39,5 +39,9 @@ server.on('connection', (client) => {
 
     });
 });
-
+// const server = app.listen(process.env.APP_PORT || 3000);
+// const io = require('./socket').init(server);
+// io.on('connection', socket => {
+//     console.log('Client Connected!');
+// });
 app.listen(process.env.APP_PORT || 3000);

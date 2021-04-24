@@ -24,6 +24,9 @@ const auth = (req, res, next) => {
             }
         });
     }
+    else{
+        res.status(408).json({'error': 'unauthorized request'});
+    }
 };
 
 module.exports = auth;

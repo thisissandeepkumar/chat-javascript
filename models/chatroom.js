@@ -47,9 +47,24 @@ const deleteChatroomById = (id, result) => {
     });
 };
 
+const getChatroomsWithUserInfoById = (id, result) => {
+    sql.query("SELECT ch.*, us1.firstname as firstname_sender, us1.lastname as lastname_sender, us2.firstname as firstname_receiver, us2.lastname as lastname_receiver FROM chatroom ch LEFT JOIN user us1 ON ch.user1 = us1.id LEFT JOIN user us2 ON ch.user2 = us2.id WHERE ch.user1 = ? OR ch.user2 = ?", [id, id], (err, res) => {
+        if(err){
+            result(err, null);
+            return;
+        }
+        else{
+            console.log(res);
+            result(null, res);
+            return;
+        }
+    });
+};
+
 module.exports = {
     chatroomSchema,
     createChatroom,
     getAllChatroomByUserId,
-    deleteChatroomById
+    deleteChatroomById,
+    getChatroomsWithUserInfoById
 };

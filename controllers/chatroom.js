@@ -15,8 +15,17 @@ exports.createChatroom = (req, res, next) => {
 };
 
 exports.getChatrooms = (req, res, next) => {
-    chatroom.getAllChatroomByUserId(req.user.id, (err, data) => {
-        errorHandler.handleGetData(req, res, next, err, data);
+    // chatroom.getAllChatroomByUserId(req.user.id, (err, data) => {
+    //     errorHandler.handleGetData(req, res, next, err, data);
+    // });
+    chatroom.getChatroomsWithUserInfoById(req.user.id, (err, data) => {
+        if(err){
+            res.status(400).json(err);
+        }
+        else{
+            console.log('Correct');
+            res.status(200).json(data);
+        }
     });
 };
 
