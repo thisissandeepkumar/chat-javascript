@@ -1,17 +1,71 @@
 const chatroom = require('../models/chatroom');
 const joi = require('joi');
 const errorHandler = require('../utils/error');
+const userModel = require('../models/user');
 
 exports.createChatroom = (req, res, next) => {
-    const newChatroom = {
-        user1: req.user.id,
-        user2: req.body.user2,
+    let user2Object;
+    joi.string().email().validateAsync(req.body.query).then(value => {
+        userModel.getUserByQuery({'query': 'email', 'value': value}, (err, data) => {
+            if(err != null){
+                res.status(400).json({"error": "Something went wrong"});
+            }
+            else{
+                user2Object = data[0];
+                console.log(user2Object);
+            }
+            if(req.user.id === user2Object.id){
+                res.status(408).json({"error": "Cannot add same users"});
+            }
+            else{
+                const newChatroom = {
+        user1: req.user.id < user2Object.id? req.user.id : user2Object.id,
+        user2: req.user.id > user2Object.id? req.user.id : user2Object.id,
     };
     chatroom.chatroomSchema.validateAsync(newChatroom).then(value => {
         chatroom.createChatroom(value, (err, data) => {
             errorHandler.handleCreatedData(req, res, next, err, data);
         });
     });
+            }
+        });
+    }).catch(err => {
+        const validationResult = errorHandler.notEmailErrorHandler(err);
+        if(validationResult){
+            userModel.getUserByQuery({'query': 'username', 'value': req.body.query}, (err, data) => {
+            if(err != null){
+                res.status(400).json({"error": "Something went wrong"});
+            }
+            else{
+                user2Object = data[0];
+                console.log(user2Object);
+            }
+            if(req.user.id === user2Object.id){
+                res.status(408).json({"error": "Cannot add same users"});
+            }
+            else{
+                const newChatroom = {
+        user1: req.user.id < user2Object.id? req.user.id : user2Object.id,
+        user2: req.user.id > user2Object.id? req.user.id : user2Object.id,
+    };
+    chatroom.chatroomSchema.validateAsync(newChatroom).then(value => {
+        chatroom.createChatroom(value, (err, data) => {
+            errorHandler.handleCreatedData(req, res, next, err, data);
+        });
+    });
+            }
+        });
+        }
+    });
+    // const newChatroom = {
+    //     user1: req.user.id,
+    //     user2: user2Object.id,
+    // };
+    // chatroom.chatroomSchema.validateAsync(newChatroom).then(value => {
+    //     chatroom.createChatroom(value, (err, data) => {
+    //         errorHandler.handleCreatedData(req, res, next, err, data);
+    //     });
+    // });
 };
 
 exports.getChatrooms = (req, res, next) => {

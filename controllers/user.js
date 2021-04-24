@@ -42,7 +42,7 @@ const authenticate = (req, res, next, query, callbackObject1) => {
                         res.status(404).json({'error': 'Error with bcrypt'});
                     }
                     else{
-                        callbackObject1(resultObject.username, null);
+                        callbackObject1(resultObject, null);
                         return;
                     }
                 });
@@ -51,22 +51,19 @@ const authenticate = (req, res, next, query, callbackObject1) => {
 };
 
 exports.loginUser = (req, res, next) => {
-    console.log(privateKey);
     loginQuery = req.body.login;
     joi.string().email().validateAsync(loginQuery).then((value) => {
         authenticate(req, res, next, 'email', (value, error) => {
-            jwt.sign({'username': value}, privateKey, { expiresIn: '1h' }, (err, token) => {
-                res.status(200).json({'token': token});
+            jwt.sign({'username': value.username}, privateKey, { expiresIn: '1h' }, (err, token) => {
+                res.status(200).json({'token': token, "user": value});
             });
         });
     }).catch((err) => {
         const isNotEmail = customErrorHandlers.notEmailErrorHandler(err);
         if(isNotEmail){
             authenticate(req, res, next, 'username',(value, error) => {   
-            jwt.sign({'username': value} , privateKey, { expiresIn: '1h'}, (err, token) => {
-                console.log('username: ' + value)
-                console.log(token);
-                res.status(200).json({'token': token});
+            jwt.sign({'username': value.username} , privateKey, { expiresIn: '1h'}, (err, token) => {
+                res.status(200).json({'token': token, "user": value});
             });
             });
             
@@ -76,4 +73,14 @@ exports.loginUser = (req, res, next) => {
             res.status(400).json(err);
         }
     });
+};
+
+exports.getUserByToken = (req, res, next) => {
+    const currentUser = req.user;
+    if(currentUser != null){
+        res.status(200).json(currentUser);
+    }
+    else{
+        res.status(475).json({"error": "No user found!"});
+    }
 };

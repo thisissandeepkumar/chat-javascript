@@ -7,8 +7,8 @@ const userSchema = joi.object({
             .min(3)
             .max(255)
             .required(),
-    password: joi.string()
-                .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
+    password: joi.string(),
+                
     email: joi.string()
             .email(),
     firstname: joi.string(),
