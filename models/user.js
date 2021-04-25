@@ -80,11 +80,25 @@ const deleteUserByQuery = (queryObject, result) => {
     });
 };
 
+const queryCount = (queryObject, result) => {
+    sql.query("SELECT COUNT(user." + queryObject.query +") FROM user WHERE user." + queryObject.query +" = ?", [queryObject.value], (err, res) => {
+        if(err){
+            result(err, null);
+            return;
+        }
+        else{
+            result(null, res);
+            return;
+        }
+    });
+};
+
 module.exports = {
     userSchema,
     createUser,
     getAllUsers,
     getUserByQuery,
     updateUserByQuery,
-    deleteUserByQuery
+    deleteUserByQuery,
+    queryCount
 }

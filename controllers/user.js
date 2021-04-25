@@ -84,3 +84,22 @@ exports.getUserByToken = (req, res, next) => {
         res.status(475).json({"error": "No user found!"});
     }
 };
+
+exports.checkDistinct = (req, res, next) => {
+    console.log(req.body);
+    user.queryCount({'query': req.body.query, 'value': req.body.value}, (err, data) => {
+        if(err){
+            res.status(400).json({'error': err});
+        }
+        else{
+            console.log(typeof data[0]);
+            // const convertedToMap = new Map(Object.entries(data[0]));
+            let obj = data[0];
+            var value;
+            Object.keys(obj).forEach((key) => {
+                value = obj[key];
+            });
+            res.status(200).json({"value": value});
+        }
+    });
+};

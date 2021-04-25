@@ -9,6 +9,7 @@ let jwt = require('jsonwebtoken');
 const privateKey = process.env.PRIVATE_KEY;
 // Middleware Imports
 const auth = require('./middlewares/auth');
+let cors = require('cors');
 
 const userModel = require('./models/user');
 const messageModel = require('./models/message');
@@ -18,6 +19,7 @@ const chatroomRouter = require('./routes/chatroom');
 const messageRouter = require('./routes/message');
 
 // Middlewares
+app.use(cors());
 app.use(bodyParser.json());
 
 
