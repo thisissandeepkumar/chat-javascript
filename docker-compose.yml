@@ -1,0 +1,15 @@
+version: "3.7"
+
+services: 
+    db:
+        image: mysql
+        restart: unless-stopped
+        ports:
+            - 3306:3306
+        environment:
+            MYSQL_ROOT_PASSWORD: ZXHb#36$aV
+            MYSQL_DATABASE: chatDB
+            MYSQL_USER: sandeep
+            MYSQL_PASSWORD: SkSdM@0505
+        volumes: 
+            - ./data:/var/lib/mysql
