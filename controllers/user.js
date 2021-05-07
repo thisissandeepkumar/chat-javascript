@@ -61,7 +61,7 @@ exports.loginUser = (req, res, next) => {
         const isNotEmail = customErrorHandlers.notEmailErrorHandler(err);
         if(isNotEmail){
             authenticate(req, res, next, 'username',(value, error) => {   
-            jwt.sign({'username': value.username} , privateKey, { expiresIn: '1h'}, (err, token) => {
+            jwt.sign({'username': value.username} , privateKey, { expiresIn: '365d'}, (err, token) => {
                 res.status(200).json({'token': token, "user": value});
             });
             });
