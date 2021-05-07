@@ -1,10 +1,17 @@
 const message = require('../models/message');
 const error = require('../utils/error');
+const io = require('../socket').getIO;
 
 module.exports.sendMessage = (req, res, next) => {
     id = req.params.id;
     message.messageSchema.validateAsync({chatroom_id: parseInt(id), sender_id: req.user.id, content: req.body.content}).then((value) => {
         message.createMessage(value, (err, data) => {
+            if(err == null){
+                io.to(parseInt(id)).emit({
+                    'sender_id': req.user.id,
+                    'content': req.body.content
+                });
+            }
             error.handleCreatedData(req, res, next, err, data);
         });
     }).catch(error =>{
