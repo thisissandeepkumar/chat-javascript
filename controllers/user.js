@@ -9,7 +9,6 @@ let privateKey = process.env.PRIVATE_KEY;
 exports.registerUser = (req, res, next) => {
     user.userSchema.validateAsync(req.body).then((value) => {
             const password = req.body.password;
-            console.log(password);
             bcrypt.hash(password, saltRounds, (err, hash) => {
                         value.password = hash;
                         console.log(value);

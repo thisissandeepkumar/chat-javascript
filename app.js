@@ -104,8 +104,27 @@ app.use('/message', auth, messageRouter);
 
 const io = require('./socket').init(process.env.SOCKET_PORT || 4545);
 
+io.use((socket, next) => {
+    const token = socket.handshake.auth.token;
+    if(token != null){
+        jwt.verify(token, privateKey, (err, decoded) => {
+        if(err != null){
+            socket.disconnect();
+        }
+        else{
+            next();
+        }
+    });
+    }
+    else{
+        socket.disconnect();
+    }
+});
+
 io.on("connection", socket => {
     console.log("Client Connected!");
     socket.send("Connected!");
+    const roomID = socket.handshake.room;
+    socket.join(roomID);
 });
 app.listen(process.env.APP_PORT || 3000);
