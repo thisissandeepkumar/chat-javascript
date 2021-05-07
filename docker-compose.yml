@@ -9,7 +9,7 @@ services:
         environment:
             MYSQL_ROOT_PASSWORD: ZXHb#36$aV
             MYSQL_DATABASE: chatDB
-            MYSQL_USER: sandeep
+            MYSQL_USER: richard
             MYSQL_PASSWORD: SkSdM@0505
         volumes: 
             - ./data:/var/lib/mysql
