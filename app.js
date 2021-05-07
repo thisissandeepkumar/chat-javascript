@@ -109,14 +109,17 @@ io.use((socket, next) => {
     if(token != null){
         jwt.verify(token, privateKey, (err, decoded) => {
         if(err != null){
+            console.log('Error!');
             socket.disconnect();
         }
         else{
+            console.log("Socket authenticated!");
             next();
         }
     });
     }
     else{
+        console.log('Error in receiving token!');
         socket.disconnect();
     }
 });
@@ -124,7 +127,8 @@ io.use((socket, next) => {
 io.on("connection", socket => {
     console.log("Client Connected!");
     socket.send("Connected!");
-    const roomID = socket.handshake.room;
+    const roomID = socket.handshake.auth.room;
+    console.log(roomID);
     socket.join(roomID);
 });
 app.listen(process.env.APP_PORT || 3000);
