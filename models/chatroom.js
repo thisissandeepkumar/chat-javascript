@@ -61,10 +61,24 @@ const getChatroomsWithUserInfoById = (id, result) => {
     });
 };
 
+const getChatroomByID = (id, result) => {
+    sql.query("SELECT * FROM chatroom WHERE chatroom.deleted IS NULL AND chatroom.id = ?", [id], (err, res) => {
+        if(err){
+            result(err, null);
+            return;
+        }
+        else{
+            result(null, res[0]);
+            return;
+        }
+    });
+};
+
 module.exports = {
     chatroomSchema,
     createChatroom,
     getAllChatroomByUserId,
     deleteChatroomById,
-    getChatroomsWithUserInfoById
+    getChatroomsWithUserInfoById,
+    getChatroomByID
 };

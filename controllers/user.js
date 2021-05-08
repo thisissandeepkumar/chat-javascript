@@ -5,6 +5,7 @@ const joi = require('joi');
 const customErrorHandlers = require('../utils/error');
 let jwt = require('jsonwebtoken');
 let privateKey = process.env.PRIVATE_KEY;
+const fcmModel = require('../models/fcm');
 
 exports.registerUser = (req, res, next) => {
     user.userSchema.validateAsync(req.body).then((value) => {
@@ -41,6 +42,12 @@ const authenticate = (req, res, next, query, callbackObject1) => {
                         res.status(404).json({'error': 'Error with bcrypt'});
                     }
                     else{
+                        fcmModel.createRow(req.body.token, resultObject.id, (err, data) => {
+                            if(err != null){
+                                console.log(err);
+                                res.status(400).json({'error':'fcm table'});
+                            }
+                        });
                         callbackObject1(resultObject, null);
                         return;
                     }
