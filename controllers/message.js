@@ -11,7 +11,7 @@ const userModel = require('../models/user');
 
 module.exports.sendMessage = (req, res, next) => {
     id = req.params.id;
-    message.messageSchema.validateAsync({chatroom_id: parseInt(id), sender_id: req.user.id, content: req.body.content}).then((value) => {
+    message.messageSchema.validateAsync({chatroom_id: parseInt(id), sender_id: req.user.id, content: req.body.content, }).then((value) => {
         message.createMessage(value, (err, data) => {
             if(err == null){
                 io.getIO().to(parseInt(id).toString()).emit("new",{

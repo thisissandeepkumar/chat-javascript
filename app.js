@@ -7,12 +7,16 @@ const http = require('http');
 const server = http.createServer();
 let jwt = require('jsonwebtoken');
 const privateKey = process.env.PRIVATE_KEY;
+
+// Model Imports
+const messageModel = require('./models/message');
+const userModel = require('./models/user');
+
+
 // Middleware Imports
 const auth = require('./middlewares/auth');
 let cors = require('cors');
 
-const userModel = require('./models/user');
-const messageModel = require('./models/message');
 // Router Imports
 const userRouter = require('./routes/user');
 const chatroomRouter = require('./routes/chatroom');
@@ -114,6 +118,14 @@ io.use((socket, next) => {
         }
         else{
             console.log("Socket authenticated!");
+            userModel.getUserByQuery({'query': 'username', 'value': decoded.username}, (err, userData) => {
+                if(!err){
+                    socket.request.user = userData[0];
+                }
+                else{
+                    socket.disconnect();
+                }
+            });
             next();
         }
     });
@@ -130,5 +142,28 @@ io.on("connection", socket => {
     const roomID = socket.handshake.auth.room;
     console.log(roomID);
     socket.join(roomID);
+    socket.on("all",(newData) => {
+        messageModel.updateAllWhereQuery({'query': 'chatroom_id', 'value': newData.room, 'column': 'isread', 'newVal': 1, 'currentUser': newData.user}, (err, data) => {
+             if(err){
+                console.log(err);
+            }
+            else{
+                console.log(data);
+                socket.broadcast.emit("all", newData);
+            }
+        });
+    } );
+    socket.on("read", (newData) => {
+        messageModel.updateMessageById({'query': 'id', 'value': newData.id, 'column': 'isread', 'newVal': 1}, (err, data) => {
+            if(err){
+                console.log(err);
+            }
+            else{
+                console.log(data);
+                socket.broadcast.emit("read", newData);
+            }
+        });
+    } );
 });
+
 app.listen(process.env.APP_PORT || 3000);

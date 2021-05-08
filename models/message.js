@@ -34,7 +34,21 @@ const getAllMessagesById = (id, result) => {
 };
 
 const updateMessageById = (queryObject, result) => {
-    sql.query("UPDATE message SET " + queryObject.query + " = " + queryObject.value, (err, res) => {
+    sql.query("UPDATE message SET " + queryObject.column + " = " + queryObject.newVal + " WHERE message." + queryObject.query + " = " + queryObject.value, (err, res) => {
+        if(err){
+            result(err, null);
+            return;
+        }
+        else{
+            result(null, res);
+            return;
+        }
+    });
+};
+
+const updateAllWhereQuery = (queryObject, result) => {
+    console.log(queryObject);
+    sql.query("UPDATE message SET " + queryObject.column +" = " + queryObject.newVal + " WHERE message.sender_id !=" + queryObject.currentUser +" AND message."+ queryObject.query + " = " + queryObject.value, (err, res) => {
         if(err){
             result(err, null);
             return;
@@ -64,5 +78,6 @@ module.exports = {
     createMessage,
     getAllMessagesById,
     updateMessageById,
-    deleteMessage
+    deleteMessage,
+    updateAllWhereQuery
 };

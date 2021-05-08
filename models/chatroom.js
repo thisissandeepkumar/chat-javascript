@@ -21,7 +21,7 @@ const createChatroom = (chatroom, result) => {
 };
 
 const getAllChatroomByUserId = (id, result) => {
-    sql.query("SELECT * FROM chatroom WHERE user1 = ? OR user2 = ?", [id, id], (err, res) => {
+    sql.query("SELECT * FROM chatroom WHERE (deleted IS NULL) AND (user1 = ? OR user2 = ?)", [id, id], (err, res) => {
         if(err){
             result(err, null);
             return;
@@ -48,7 +48,7 @@ const deleteChatroomById = (id, result) => {
 };
 
 const getChatroomsWithUserInfoById = (id, result) => {
-    sql.query("SELECT ch.*, us1.firstname as firstname_sender, us1.lastname as lastname_sender, us1.username as username_sender , us1.email as email_sender,us2.firstname as firstname_receiver, us2.lastname as lastname_receiver, us2.username as username_receiver , us2.email as email_receiver FROM chatroom ch LEFT JOIN user us1 ON ch.user1 = us1.id LEFT JOIN user us2 ON ch.user2 = us2.id WHERE ch.user1 = ? OR ch.user2 = ?", [id, id], (err, res) => {
+    sql.query("SELECT ch.*, us1.firstname as firstname_sender, us1.lastname as lastname_sender, us1.username as username_sender , us1.email as email_sender,us2.firstname as firstname_receiver, us2.lastname as lastname_receiver, us2.username as username_receiver , us2.email as email_receiver FROM chatroom ch LEFT JOIN user us1 ON ch.user1 = us1.id LEFT JOIN user us2 ON ch.user2 = us2.id WHERE (deleted IS NULL) AND (ch.user1 = ? OR ch.user2 = ?)", [id, id], (err, res) => {
         if(err){
             result(err, null);
             return;
